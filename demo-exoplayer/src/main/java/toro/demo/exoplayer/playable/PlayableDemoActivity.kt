@@ -25,7 +25,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import butterknife.ButterKnife
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ui.DebugTextViewHelper
+import com.google.android.exoplayer2.util.DebugTextViewHelper
 import im.ene.toro.exoplayer.ExoPlayable
 import im.ene.toro.exoplayer.Playable
 import im.ene.toro.exoplayer.ToroExo
