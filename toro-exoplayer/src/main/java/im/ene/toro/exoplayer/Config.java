@@ -59,7 +59,7 @@ public final class Config {
   @NonNull final MediaSourceBuilder mediaSourceBuilder;
 
   // Nullable options
-  @Nullable final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
+  @Nullable final DrmSessionManager drmSessionManager;
   @Nullable final Cache cache; // null by default
   // If null, ExoCreator must come up with a default one.
   // This is to help customizing the Data source, for example using OkHttp extension.
@@ -71,7 +71,7 @@ public final class Config {
       @NonNull LoadControl loadControl,
       @Nullable DataSource.Factory dataSourceFactory,
       @NonNull MediaSourceBuilder mediaSourceBuilder,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache,
+      @Nullable DrmSessionManager drmSessionManager, @Nullable Cache cache,
       Clock clock) {
     this.context = context != null ? context.getApplicationContext() : null;
     this.extensionMode = extensionMode;
@@ -149,7 +149,7 @@ public final class Config {
     private LoadControl loadControl = new DefaultLoadControl();
     private DataSource.Factory dataSourceFactory = null;
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
-    private DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+    private DrmSessionManager drmSessionManager = null;
     private Cache cache = null;
     private Clock clock = Clock.DEFAULT;
 
@@ -182,7 +182,7 @@ public final class Config {
 
     @Beta //
     public Builder setDrmSessionManager(
-        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+        @Nullable DrmSessionManager drmSessionManager) {
       this.drmSessionManager = drmSessionManager;
       return this;
     }

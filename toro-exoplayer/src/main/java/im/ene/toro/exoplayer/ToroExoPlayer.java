@@ -40,11 +40,8 @@ import static im.ene.toro.ToroUtil.checkNotNull;
 @SuppressWarnings("WeakerAccess") //
 public class ToroExoPlayer extends SimpleExoPlayer {
 
-  protected ToroExoPlayer(Context context, RenderersFactory renderersFactory,
-      TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter,
-      AnalyticsCollector analyticsCollector, Clock clock, Looper looper) {
-    super(context, renderersFactory, trackSelector, loadControl, bandwidthMeter,
-        analyticsCollector, clock, looper);
+  protected ToroExoPlayer(Builder builder) {
+    super(builder);
   }
 
   private ToroPlayer.VolumeChangeListeners listeners;

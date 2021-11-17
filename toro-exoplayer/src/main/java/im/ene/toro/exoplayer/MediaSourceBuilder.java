@@ -50,7 +50,7 @@ public interface MediaSourceBuilder {
       @Nullable String fileExt, @Nullable Handler handler,
       @NonNull DataSource.Factory manifestDataSourceFactory,
       @NonNull DataSource.Factory mediaDataSourceFactory,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+      @Nullable DrmSessionManager drmSessionManager,
       @Nullable MediaSourceEventListener listener);
 
   MediaSourceBuilder DEFAULT = new MediaSourceBuilder() {
@@ -59,7 +59,7 @@ public interface MediaSourceBuilder {
         @Nullable String ext, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory,
-        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+        @Nullable DrmSessionManager drmSessionManager,
         MediaSourceEventListener listener) {
       @ContentType int type = isEmpty(ext) ? inferContentType(uri) : inferContentType("." + ext);
       MediaSource result;
@@ -105,7 +105,7 @@ public interface MediaSourceBuilder {
         @Nullable String fileExt, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory,
-        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+        @Nullable DrmSessionManager drmSessionManager,
         @Nullable MediaSourceEventListener listener) {
       return new LoopingMediaSource(
           DEFAULT.buildMediaSource(context, uri, fileExt, handler, manifestDataSourceFactory,

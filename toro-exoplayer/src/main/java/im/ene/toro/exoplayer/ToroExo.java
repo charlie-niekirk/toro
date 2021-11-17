@@ -213,8 +213,8 @@ public final class ToroExo {
    * </code></pre>
    */
   @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
-  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull DrmMedia drm) {
-    DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+  public DrmSessionManager createDrmSessionManager(@NonNull DrmMedia drm) {
+    DrmSessionManager drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
     String subString = null;
     if (Util.SDK_INT < 18) {
@@ -248,7 +248,7 @@ public final class ToroExo {
     return drmSessionManager;
   }
 
-  @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
+  @RequiresApi(18) private static DrmSessionManager buildDrmSessionManagerV18(
       @NonNull UUID uuid, @Nullable String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
       boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory)
       throws UnsupportedDrmException {
@@ -259,7 +259,7 @@ public final class ToroExo {
             keyRequestPropertiesArray[i + 1]);
       }
     }
-    return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
+    return new DefaultDrmSessionManager(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
         null, multiSession);
   }
 
