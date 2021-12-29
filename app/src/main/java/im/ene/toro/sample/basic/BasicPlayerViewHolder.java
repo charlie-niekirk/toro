@@ -25,7 +25,6 @@ import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.ExoPlayerDispatcher;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -52,7 +51,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   public BasicPlayerViewHolder(View itemView, PressablePlayerSelector selector) {
     super(itemView);
     ButterKnife.bind(this, itemView);
-    if (selector != null) playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
+    //if (selector != null) playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
   }
 
   @NonNull @Override public View getPlayerView() {

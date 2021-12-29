@@ -28,7 +28,6 @@ import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.source.LoadEventInfo;
 import com.google.android.exoplayer2.source.MediaLoadData;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -38,10 +37,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.util.Clock;
-import com.google.android.exoplayer2.util.Util;
 import java.io.IOException;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -80,11 +78,11 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
         .setExtensionRendererMode(config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
-      baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
+      baseFactory = new DefaultHttpDataSource.Factory().setUserAgent(toro.appName);
     }
     DataSource.Factory factory = new DefaultDataSourceFactory(this.toro.context,  //
         config.meter, baseFactory);
-    if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
+    if (config.cache != null) factory = new CacheDataSource.Factory().setCache(config.cache).setCacheReadDataSourceFactory(factory);
     mediaDataSourceFactory = factory;
     manifestDataSourceFactory = new DefaultDataSourceFactory(this.toro.context, this.toro.appName);
   }

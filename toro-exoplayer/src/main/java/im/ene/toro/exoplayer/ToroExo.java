@@ -21,8 +21,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Build;
-import android.text.TextUtils;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -33,14 +31,11 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.VolumeInfo;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -50,9 +45,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import static android.widget.Toast.LENGTH_SHORT;
-import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
-import static com.google.android.exoplayer2.util.Util.getDrmUuid;
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 import static java.lang.Runtime.getRuntime;
@@ -200,52 +192,6 @@ public final class ToroExo {
   /* pkg */ String getString(@StringRes int resId, @Nullable Object... params) {
     return params == null || params.length < 1 ?  //
         this.context.getString(resId) : this.context.getString(resId, params);
-  }
-
-  /**
-   * Utility method to build a {@link DrmSessionManager} that can be used in {@link Config}
-   *
-   * Usage:
-   * <pre><code>
-   *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm);
-   *   Config config = new Config.Builder().setDrmSessionManager(manager);
-   *   ExoCreator creator = ToroExo.with(context).getCreator(config);
-   * </code></pre>
-   */
-  @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
-  public DrmSessionManager createDrmSessionManager(@NonNull DrmMedia drm) {
-    DrmSessionManager drmSessionManager = null;
-    int errorStringId = R.string.error_drm_unknown;
-    String subString = null;
-    if (Util.SDK_INT < 18) {
-      errorStringId = R.string.error_drm_not_supported;
-    } else {
-      UUID drmSchemeUuid = getDrmUuid(checkNotNull(drm).getType());
-      if (drmSchemeUuid == null) {
-        errorStringId = R.string.error_drm_unsupported_scheme;
-      } else {
-        HttpDataSource.Factory factory = new DefaultHttpDataSourceFactory(appName);
-        try {
-          drmSessionManager = buildDrmSessionManagerV18(drmSchemeUuid, drm.getLicenseUrl(),
-              drm.getKeyRequestPropertiesArray(), drm.multiSession(), factory);
-        } catch (UnsupportedDrmException e) {
-          e.printStackTrace();
-          errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
-              R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
-          if (e.reason == REASON_UNSUPPORTED_SCHEME) {
-            subString = drm.getType();
-          }
-        }
-      }
-    }
-
-    if (drmSessionManager == null) {
-      String error = TextUtils.isEmpty(subString) ? context.getString(errorStringId)
-          : context.getString(errorStringId) + ": " + subString;
-      Toast.makeText(context, error, LENGTH_SHORT).show();
-    }
-
-    return drmSessionManager;
   }
 
   @RequiresApi(18) private static DrmSessionManager buildDrmSessionManagerV18(

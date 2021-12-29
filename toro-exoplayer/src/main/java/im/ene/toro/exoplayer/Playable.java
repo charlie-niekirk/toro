@@ -20,6 +20,7 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -32,13 +33,16 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.video.VideoListener;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.exoplayer2.video.VideoSize;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+;
 
 /**
  * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
@@ -200,14 +204,14 @@ public interface Playable {
   void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
 
   // Combine necessary interfaces.
-  interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {
+  interface EventListener extends Player.Listener, VideoRendererEventListener, TextOutput, MetadataOutput {
 
   }
 
   /** Default empty implementation */
   class DefaultEventListener implements EventListener {
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+    @Override public void onTimelineChanged(Timeline timeline, int reason) {
 
     }
 
@@ -232,7 +236,7 @@ public interface Playable {
 
     }
 
-    @Override public void onPlayerError(ExoPlaybackException error) {
+    @Override public void onPlayerError(PlaybackException error) {
 
     }
 
@@ -248,8 +252,7 @@ public interface Playable {
 
     }
 
-    @Override public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
-        float pixelWidthHeightRatio) {
+    @Override public void onVideoSizeChanged(VideoSize videoSize) {
 
     }
 
@@ -277,11 +280,9 @@ public interface Playable {
     EventListeners() {
     }
 
-    @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
-        float pixelWidthHeightRatio) {
+    @Override public void onVideoSizeChanged(VideoSize videoSize) {
       for (EventListener eventListener : this) {
-        eventListener.onVideoSizeChanged(width, height, unAppliedRotationDegrees,
-            pixelWidthHeightRatio);
+        eventListener.onVideoSizeChanged(videoSize);
       }
     }
 
@@ -298,9 +299,9 @@ public interface Playable {
       }
     }
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+    @Override public void onTimelineChanged(Timeline timeline, int reason) {
       for (EventListener eventListener : this) {
-        eventListener.onTimelineChanged(timeline, manifest, reason);
+        eventListener.onTimelineChanged(timeline, reason);
       }
     }
 
@@ -335,7 +336,7 @@ public interface Playable {
       }
     }
 
-    @Override public void onPlayerError(ExoPlaybackException error) {
+    @Override public void onPlayerError(PlaybackException error) {
       for (EventListener eventListener : this) {
         eventListener.onPlayerError(error);
       }

@@ -128,9 +128,9 @@ class PlayableImpl implements Playable {
       this.player.stop(true);
       if (listenerApplied) {
         player.removeListener(listeners);
-        player.removeVideoListener(listeners);
-        player.removeTextOutput(listeners);
-        player.removeMetadataOutput(listeners);
+        //player.removeVideoListener(listeners);
+        //player.removeTextOutput(listeners);
+        //player.removeMetadataOutput(listeners);
         if (this.player instanceof ToroExoPlayer) {
           ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(this.volumeChangeListeners);
         }
@@ -267,9 +267,9 @@ class PlayableImpl implements Playable {
         ((ToroExoPlayer) player).addOnVolumeChangeListener(volumeChangeListeners);
       }
       player.addListener(listeners);
-      player.addVideoListener(listeners);
-      player.addTextOutput(listeners);
-      player.addMetadataOutput(listeners);
+      //player.addVideoListener(listeners);
+      //player.addTextOutput(listeners);
+      //player.addMetadataOutput(listeners);
       listenerApplied = true;
     }
 

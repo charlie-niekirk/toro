@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -137,33 +138,30 @@ public class ExoPlayable extends PlayableImpl {
       }
     }
 
-    @Override public void onPlayerError(ExoPlaybackException error) {
+    @Override public void onPlayerError(PlaybackException error) {
       /// Adapt from ExoPlayer Demo
       String errorString = null;
-      if (error.type == ExoPlaybackException.TYPE_RENDERER) {
-        Exception cause = error.getRendererException();
-        if (cause instanceof MediaCodecRenderer.DecoderInitializationException) {
+      if (error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED) {
+        //if (error.getErrorCodeName().equalsIgnoreCase("DecoderInitializationException")) {
           // Special case for decoder initialization failures.
-          MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
-              (MediaCodecRenderer.DecoderInitializationException) cause;
-          if (decoderInitializationException.codecInfo == null) {
-            if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
-              errorString = toro.getString(R.string.error_querying_decoders);
-            } else if (decoderInitializationException.secureDecoderRequired) {
-              errorString = toro.getString(R.string.error_no_secure_decoder,
-                  decoderInitializationException.mimeType);
-            } else {
-              errorString = toro.getString(R.string.error_no_decoder,
-                  decoderInitializationException.mimeType);
-            }
-          } else {
-            errorString = toro.getString(R.string.error_instantiating_decoder,
-                decoderInitializationException.codecInfo.name);
-          }
-        }
+          //MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
+          //    (MediaCodecRenderer.DecoderInitializationException) cause;
+          //if (decoderInitializationException.codecInfo == null) {
+          //  if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
+          //    errorString = toro.getString(R.string.error_querying_decoders);
+          //  } else if (decoderInitializationException.secureDecoderRequired) {
+          //    errorString = toro.getString(R.string.error_no_secure_decoder,
+          //        decoderInitializationException.mimeType);
+          //  } else {
+          //    errorString = toro.getString(R.string.error_no_decoder,
+          //        decoderInitializationException.mimeType);
+          //  }
+          //} else {
+          //  errorString = toro.getString(R.string.error_instantiating_decoder,
+          //      decoderInitializationException.codecInfo.name);
+          //}
+        //}
       }
-
-      if (errorString != null) onErrorMessage(errorString);
 
       inErrorState = true;
       if (isBehindLiveWindow(error)) {
@@ -188,13 +186,7 @@ public class ExoPlayable extends PlayableImpl {
     }
   }
 
-  static boolean isBehindLiveWindow(ExoPlaybackException error) {
-    if (error.type != ExoPlaybackException.TYPE_SOURCE) return false;
-    Throwable cause = error.getSourceException();
-    while (cause != null) {
-      if (cause instanceof BehindLiveWindowException) return true;
-      cause = cause.getCause();
-    }
-    return false;
+  static boolean isBehindLiveWindow(PlaybackException error) {
+    return error.errorCode != PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW;
   }
 }
