@@ -82,7 +82,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       baseFactory = new DefaultHttpDataSource.Factory().setUserAgent(toro.appName);
     }
     DataSource.Factory factory = new DefaultDataSource.Factory(this.toro.context, baseFactory);
-    if (config.cache != null) factory = new CacheDataSource.Factory().setCache(config.cache).setCacheReadDataSourceFactory(factory);
+    if (config.cache != null) factory = new CacheDataSource.Factory().setCache(config.cache).setUpstreamDataSourceFactory(factory);
     mediaDataSourceFactory = factory;
     manifestDataSourceFactory = new DefaultHttpDataSource.Factory().setUserAgent(this.toro.appName);
   }
