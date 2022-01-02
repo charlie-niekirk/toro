@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -162,6 +163,8 @@ public class ExoPlayable extends PlayableImpl {
           //}
         //}
       }
+
+      Log.e("TAG", error.getErrorCodeName() + ": " + error.getLocalizedMessage());
 
       inErrorState = true;
       if (isBehindLiveWindow(error)) {
