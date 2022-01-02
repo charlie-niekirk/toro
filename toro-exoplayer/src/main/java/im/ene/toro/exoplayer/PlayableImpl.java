@@ -21,6 +21,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -60,7 +61,7 @@ class PlayableImpl implements Playable {
   protected final String fileExt;
   protected final ExoCreator creator; // required, cached
 
-  protected SimpleExoPlayer player; // on-demand, cached
+  protected ExoPlayer player; // on-demand, cached
   protected MediaSource mediaSource;  // on-demand, since we do not reuse MediaSource now.
   protected PlayerView playerView; // on-demand, not always required.
 
@@ -114,7 +115,8 @@ class PlayableImpl implements Playable {
     if (player != null) {
       // reset volume to default
       ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
-      player.stop(true);
+      player.stop();
+      player.clearMediaItems();
     }
     this.mediaSource = null; // so it will be re-prepared when play() is called.
     this.sourcePrepared = false;
@@ -229,8 +231,8 @@ class PlayableImpl implements Playable {
 
   final void updatePlaybackInfo() {
     if (player == null || player.getPlaybackState() == Player.STATE_IDLE) return;
-    playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
-    playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
+    playbackInfo.setResumeWindow(player.getCurrentMediaItemIndex());
+    playbackInfo.setResumePosition(player.isCurrentMediaItemSeekable() ? //
         Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
     playbackInfo.setVolumeInfo(ToroExo.getVolumeInfo(player));
   }

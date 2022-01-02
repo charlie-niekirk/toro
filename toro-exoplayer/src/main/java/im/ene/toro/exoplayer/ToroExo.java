@@ -27,6 +27,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StringRes;
 import androidx.core.util.Pools;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -88,7 +89,7 @@ public final class ToroExo {
   @NonNull final String appName;
   @NonNull final Context context;  // Application context
   @NonNull private final Map<Config, ExoCreator> creators;
-  @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
+  @NonNull private final Map<ExoCreator, Pools.Pool<ExoPlayer>> playerPools;
 
   private Config defaultConfig; // will be created on the first time it is used.
 
@@ -142,8 +143,8 @@ public final class ToroExo {
    * @return an usable {@link SimpleExoPlayer} instance.
    */
   @NonNull  //
-  public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
-    SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
+  public final ExoPlayer requestPlayer(@NonNull ExoCreator creator) {
+    ExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
     return player;
   }
@@ -156,7 +157,7 @@ public final class ToroExo {
    * @return true if player is released to relevant Pool, false otherwise.
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
-  public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
+  public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull ExoPlayer player) {
     return getPool(checkNotNull(creator)).release(player);
   }
 
@@ -166,18 +167,18 @@ public final class ToroExo {
    */
   public final void cleanUp() {
     // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
-    for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
+    for (Iterator<Map.Entry<ExoCreator, Pools.Pool<ExoPlayer>>> it =
         playerPools.entrySet().iterator(); it.hasNext(); ) {
-      Pools.Pool<SimpleExoPlayer> pool = it.next().getValue();
-      SimpleExoPlayer item;
+      Pools.Pool<ExoPlayer> pool = it.next().getValue();
+      ExoPlayer item;
       while ((item = pool.acquire()) != null) item.release();
       it.remove();
     }
   }
 
   /// internal APIs
-  private Pools.Pool<SimpleExoPlayer> getPool(ExoCreator creator) {
-    Pools.Pool<SimpleExoPlayer> pool = playerPools.get(creator);
+  private Pools.Pool<ExoPlayer> getPool(ExoCreator creator) {
+    Pools.Pool<ExoPlayer> pool = playerPools.get(creator);
     if (pool == null) {
       pool = new Pools.SimplePool<>(MAX_POOL_SIZE);
       playerPools.put(creator, pool);
@@ -211,7 +212,7 @@ public final class ToroExo {
 
   // Share the code of setting Volume. For use inside library only.
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player,
+  public static void setVolumeInfo(@NonNull ExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
@@ -225,7 +226,7 @@ public final class ToroExo {
   }
 
   @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
+  public static VolumeInfo getVolumeInfo(ExoPlayer player) {
     if (player instanceof ToroExoPlayer) {
       return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
     } else {

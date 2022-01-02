@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -216,15 +217,19 @@ public interface Playable {
     }
 
     @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+    public void onTracksInfoChanged(TracksInfo tracksInfo) {
 
     }
 
-    @Override public void onLoadingChanged(boolean isLoading) {
+    @Override public void onIsLoadingChanged(boolean isLoading) {
 
     }
 
-    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    @Override public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+
+    }
+
+    @Override public void onPlaybackStateChanged(int playbackState) {
 
     }
 
@@ -240,15 +245,12 @@ public interface Playable {
 
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
+    @Override public void onPositionDiscontinuity(Player.PositionInfo oldPosition,
+        Player.PositionInfo newPosition, int reason) {
 
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-    }
-
-    @Override public void onSeekProcessed() {
 
     }
 
@@ -305,22 +307,27 @@ public interface Playable {
       }
     }
 
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+    @Override public void onTracksInfoChanged(TracksInfo tracksInfo) {
       for (EventListener eventListener : this) {
-        eventListener.onTracksChanged(trackGroups, trackSelections);
+        eventListener.onTracksInfoChanged(tracksInfo);
       }
     }
 
-    @Override public void onLoadingChanged(boolean isLoading) {
+    @Override public void onIsLoadingChanged(boolean isLoading) {
       for (EventListener eventListener : this) {
-        eventListener.onLoadingChanged(isLoading);
+        eventListener.onIsLoadingChanged(isLoading);
       }
     }
 
-    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    @Override public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
       for (EventListener eventListener : this) {
-        eventListener.onPlayerStateChanged(playWhenReady, playbackState);
+        eventListener.onPlayWhenReadyChanged(playWhenReady, reason);
+      }
+    }
+
+    @Override public void onPlaybackStateChanged(int playbackState) {
+      for (EventListener eventListener : this) {
+        eventListener.onPlaybackStateChanged(playbackState);
       }
     }
 
@@ -342,21 +349,16 @@ public interface Playable {
       }
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
+    @Override public void onPositionDiscontinuity(Player.PositionInfo oldPosition,
+        Player.PositionInfo newPosition, int reason) {
       for (EventListener eventListener : this) {
-        eventListener.onPositionDiscontinuity(reason);
+        eventListener.onPositionDiscontinuity(oldPosition, newPosition, reason);
       }
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
       for (EventListener eventListener : this) {
         eventListener.onPlaybackParametersChanged(playbackParameters);
-      }
-    }
-
-    @Override public void onSeekProcessed() {
-      for (EventListener eventListener : this) {
-        eventListener.onSeekProcessed();
       }
     }
 
